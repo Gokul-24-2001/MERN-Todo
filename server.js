@@ -1,9 +1,11 @@
 //using express
 const express=require("express");
 const mongoose=require('mongoose')
+const cors=require("cors")
 // create a instance of express..object
 const app=express();
 app.use(express.json())
+app.use(cors())
 //sample...to store item in memory
 // let storeTodos=[]
 // create new item todo
@@ -15,7 +17,7 @@ mongoose.connect('mongodb://localhost:27017/mern-app')
 
 // creating schema
 const todoschema=new mongoose.Schema({
-    tittle:{
+    title:{
         required:true,
         type:String
     },
@@ -25,7 +27,7 @@ const todoschema=new mongoose.Schema({
 const todoModel=mongoose.model('Todo',todoschema)
 
 app.post('/todos',async (req,res)=>{
-   const {tittle,description} = req.body
+   const {title,description} = req.body;
 // const newTodo={
 //     id:storeTodos.length+1,
 //     tittle,description
@@ -34,7 +36,7 @@ app.post('/todos',async (req,res)=>{
 // storeTodos.push(newTodo)
 // console.log(storeTodos)
 try{
-    const newTodo=new todoModel({tittle,description});
+    const newTodo=new todoModel({title,description});
     await newTodo.save()
     res.status(201).json(newTodo)
 }
@@ -58,9 +60,9 @@ app.get('/todos',async (req,res)=>{
 //update the todos
 app.put('/todos/:id',async (req,res)=>{
     try{
-        const {tittle,description} = req.body;
+        const {title,description} = req.body;
     const id=req.params.id;
-       const updatedtodo=await todoModel.findByIdAndUpdate(id,{tittle,description},{new:id});
+       const updatedtodo=await todoModel.findByIdAndUpdate(id,{title,description},{new:true});
        // if given 'id' is not find in database
        if(!updatedtodo){
         return res.status(404).json({message:"Todo is not found"})
@@ -86,5 +88,5 @@ catch(error){
 })
 
 // start the serve
-const port=4000;
+const port=8000;
 app.listen(port,()=>console.log("server is listening to port"+" "+port))
