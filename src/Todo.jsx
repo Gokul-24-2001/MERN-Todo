@@ -16,7 +16,7 @@ function Todo() {
     // before submitting error message removal
     setError("");
     if (title !== "" && description !== "") {
-      e.preventDefault();
+      // e.preventDefault();
       fetch(apiurl + "/todos", {
         method: "POST",
         headers: {
@@ -28,6 +28,8 @@ function Todo() {
           if (res.ok) {
             // add item in list
             setTodos([...todos, { title, description }]);
+            // setTitle("");
+            // setDescription("");
             setMessage("item added successfully");
             setTimeout(()=>{
      setMessage("");
@@ -65,6 +67,20 @@ function Todo() {
   }
   const handleEditCancel=()=>{
     setEditId(-1);
+  }
+  const handleDelete=(id)=>{
+ if(window.confirm("Are you sure want to delete?")){
+  fetch(apiurl+'/todos/'+id,{
+    method:'DELETE'
+  })
+  .then((res)=>{
+    const updatedtodo=todos.filter((item)=>item._id!==id);
+    setTodos(updatedtodo);
+  })
+  .catch((error)=>{
+    console.log(error);
+  })
+ }
   }
   const handleUpdate=(e)=>{
     setError("");
@@ -160,7 +176,7 @@ function Todo() {
           </div>
           <div className="d-flex gap-2 align-items-center">
            {editid==-1 || editid!==item._id?<button className="btn btn-warning"onClick={()=>{handleEdit(item)}}>Edit</button>:<button className="btn btn-warning" onClick={handleUpdate}>update</button>}
-        {editid==-1 || editid!==item._id?<button className="btn btn-danger">delete</button>:<button onClick={()=>handleEditCancel()} className="btn btn-danger">Cancel</button>}  
+        {editid==-1 || editid!==item._id?<button className="btn btn-danger" onClick={()=>handleDelete(item._id)}>delete</button>:<button onClick={()=>handleEditCancel()} className="btn btn-danger">Cancel</button>}  
           </div> 
          </li>
          })}
